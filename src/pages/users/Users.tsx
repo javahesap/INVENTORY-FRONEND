@@ -1,6 +1,7 @@
 import React from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/axios";
+import type { Page } from "../../types";
 
 type User = {
   id: number;
@@ -9,9 +10,7 @@ type User = {
   enabled?: boolean;
 };
 
-type Page<T> = { content: T[]; totalElements: number; totalPages: number; size: number; number: number; };
-
-async function fetchUsers(params: { page: number; size: number; q?: string }) {
+async function fetchUsers(params: { page: number; size: number; q?: string }): Promise<Page<User>> {
   const { data } = await api.get<Page<User>>("/api/users", { params });
   return data;
 }
@@ -34,7 +33,11 @@ export default function Users() {
   const [size, setSize] = React.useState(10);
   const [q, setQ] = React.useState("");
 
-  const usersQ = useQuery({ queryKey: ["users", page, size, q], queryFn: () => fetchUsers({ page, size, q: q || undefined }), keepPreviousData: true });
+  const usersQ = useQuery<Page<User>>({
+    queryKey: ["users", page, size, q],
+    queryFn: () => fetchUsers({ page, size, q: q || undefined }),
+    placeholderData: keepPreviousData,
+  });
   const rolesQ = useQuery({ queryKey: ["roles"], queryFn: fetchRoles });
 
   const createMut = useMutation({

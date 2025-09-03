@@ -1,7 +1,8 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import api from "../../api/axios";
 import { useDownload } from "../../hooks/useDownload";
+import type { Page } from "../../types";
 
 type Movement = {
   id: number;
@@ -14,18 +15,15 @@ type Movement = {
   user?: string;
 };
 
-type Page<T> = {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-};
-
 async function fetchMovements(params: {
-  page: number; size: number; sort: string;
-  from?: string; to?: string; warehouseId?: string; q?: string;
-}) {
+  page: number;
+  size: number;
+  sort: string;
+  from?: string;
+  to?: string;
+  warehouseId?: string;
+  q?: string;
+}): Promise<Page<Movement>> {
   const { data } = await api.get<Page<Movement>>("/api/stock-movements", { params });
   return data;
 }
@@ -79,8 +77,17 @@ export default function Movements() {
 
   const query = useQuery<Page<Movement>>({
     queryKey: ["movements", filters],
-    queryFn: () => fetchMovements({ page: filters.page, size: filters.size, sort: filters.sort, from: filters.from, to: filters.to, warehouseId: filters.wh || undefined, q: filters.q || undefined }),
-    keepPreviousData: true
+    queryFn: () =>
+      fetchMovements({
+        page: filters.page,
+        size: filters.size,
+        sort: filters.sort,
+        from: filters.from,
+        to: filters.to,
+        warehouseId: filters.wh || undefined,
+        q: filters.q || undefined,
+      }),
+    placeholderData: keepPreviousData,
   });
 
   const doExport = (fmt: "pdf"|"xlsx") => {

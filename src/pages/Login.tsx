@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import type { FormEvent } from "react";
+import { useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -9,14 +10,15 @@ export default function Login() {
   const [p, setP] = useState("");
   const [err, setErr] = useState("");
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     setErr("");
     try {
-      await login(u,p);
+      await login(u, p);
       nav("/");
-    } catch (e: any) {
-      setErr(e.message || "Giriş başarısız");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Giriş başarısız";
+      setErr(msg);
     }
   };
 

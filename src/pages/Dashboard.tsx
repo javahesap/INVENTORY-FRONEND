@@ -1,9 +1,9 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import api from "../api/axios";
 import { useDownload } from "../hooks/useDownload";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import type { Page } from "../types";
 
 // --- Tipler ---
 type Metrics = {
@@ -25,14 +25,6 @@ type Movement = {
   quantity: number;
   unitPrice?: number;
   user?: string;
-};
-
-type Page<T> = {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
 };
 
 // --- API çağrıları ---

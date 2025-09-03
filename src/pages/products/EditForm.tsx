@@ -1,5 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import api from "../../api/axios";
@@ -10,8 +11,8 @@ const schema = z.object({
   productCode: z.string().min(1, "Kod zorunlu"),
   name: z.string().min(1, "Ad zorunlu"),
   description: z.string().optional(),
-  categoryId: z.coerce.number().optional(),
-  unit: z.string().optional()
+  categoryId: z.number().optional(),
+  unit: z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -41,7 +42,7 @@ export default function EditForm() {
   const nav = useNavigate();
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
-    resolver: zodResolver(schema)
+    resolver: zodResolver(schema),
   });
 
   const catsQ = useQuery({ queryKey: ["categories"], queryFn: fetchCategories, staleTime: 5*60_000 });
@@ -67,7 +68,7 @@ export default function EditForm() {
   const createMut = useMutation({ mutationFn: createProduct, onSuccess: ()=>nav("/products") });
   const updateMut = useMutation({ mutationFn: (payload: FormData)=>updateProduct(Number(id), payload), onSuccess: ()=>nav("/products") });
 
-  const onSubmit = (d: FormData) => {
+  const onSubmit: SubmitHandler<FormData> = (d) => {
     if (editing) updateMut.mutate(d);
     else createMut.mutate(d);
   };
@@ -95,9 +96,16 @@ export default function EditForm() {
             </div>
             <div className="col-sm-6">
               <label className="form-label">Kategori</label>
-              <select className="form-select" {...register("categoryId")}>
+              <select
+                className="form-select"
+                {...register("categoryId", {
+                  setValueAs: v => (v === "" ? undefined : Number(v)),
+                })}
+              >
                 <option value="">— seçin —</option>
-                {catsQ.data?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                {catsQ.data?.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
               </select>
             </div>
             <div className="col-sm-6">

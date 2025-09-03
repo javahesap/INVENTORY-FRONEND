@@ -23,20 +23,24 @@ export default function Login() {
   };
 
   return (
-    <div style={{display:"grid", placeItems:"center", minHeight:"100vh"}}>
-      <form onSubmit={submit} style={{background:"#fff", padding:24, borderRadius:12, width:360}}>
-        <h3>Giriş</h3>
-        <div>
-          <label>Kullanıcı adı</label>
-          <input className="form-control" value={u} onChange={e=>setU(e.target.value)} required/>
+    <div className="container min-vh-100 d-flex justify-content-center align-items-center">
+      <div className="card shadow-sm" style={{ maxWidth: 420, width: "100%" }}>
+        <div className="card-body">
+          <h3 className="mb-3">Giriş</h3>
+          <form onSubmit={submit}>
+            <div className="mb-3">
+              <label className="form-label">Kullanıcı adı</label>
+              <input className="form-control" value={u} onChange={e => setU(e.target.value)} required />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Şifre</label>
+              <input type="password" className="form-control" value={p} onChange={e => setP(e.target.value)} required />
+            </div>
+            {err && <div className="text-danger mb-2">{err}</div>}
+            <button className="btn btn-primary w-100">Giriş</button>
+          </form>
         </div>
-        <div>
-          <label>Şifre</label>
-          <input type="password" className="form-control" value={p} onChange={e=>setP(e.target.value)} required/>
-        </div>
-        {err && <div style={{color:"crimson", marginTop:8}}>{err}</div>}
-        <button className="btn btn-primary" style={{marginTop:12, width:"100%"}}>Giriş</button>
-      </form>
+      </div>
     </div>
   );
 }

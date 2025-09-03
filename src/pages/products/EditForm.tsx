@@ -78,7 +78,7 @@ export default function EditForm() {
       <h2>{editing? "Ürünü Düzenle" : "Yeni Ürün"}</h2>
 
       {(editing && prodQ.isLoading) ? <div>Yükleniyor…</div> : (
-        <form onSubmit={handleSubmit(onSubmit)} className="card" style={{padding:16, maxWidth:720}}>
+        <form onSubmit={handleSubmit(onSubmit)} className="card p-3" style={{maxWidth:720}}>
           <div className="row g-3">
             <div className="col-sm-4">
               <label className="form-label">Kod *</label>

@@ -34,12 +34,32 @@ export default function ProductList() {
   return (
     <div>
       <h2>Ürünler</h2>
-      <div style={{display:"flex", gap:8, marginBottom:12}}>
-        <input placeholder="Ara..." value={q} onChange={e=>{setQ(e.target.value); setPage(0);}} />
-        <select value={size} onChange={e=>setSize(Number(e.target.value))}>
-          <option>10</option><option>20</option><option>50</option>
+      <div className="d-flex gap-2 mb-3">
+        <input
+          className="form-control"
+          placeholder="Ara..."
+          value={q}
+          onChange={e => {
+            setQ(e.target.value);
+            setPage(0);
+          }}
+        />
+        <select
+          className="form-select"
+          value={size}
+          onChange={e => setSize(Number(e.target.value))}
+          style={{ width: "auto" }}
+        >
+          <option>10</option>
+          <option>20</option>
+          <option>50</option>
         </select>
-        <select value={sort} onChange={e=>setSort(e.target.value)}>
+        <select
+          className="form-select"
+          value={sort}
+          onChange={e => setSort(e.target.value)}
+          style={{ width: "auto" }}
+        >
           <option value="id,desc">ID ↓</option>
           <option value="id,asc">ID ↑</option>
           <option value="name,asc">Ad ↑</option>
@@ -52,7 +72,7 @@ export default function ProductList() {
 
       {data && (
         <>
-          <table className="table table-sm">
+          <table className="table table-sm table-striped">
             <thead>
               <tr>
                 <th>ID</th><th>Kod</th><th>Ad</th><th>Kategori</th><th>Birim</th><th>Oluşturma</th>
@@ -72,10 +92,22 @@ export default function ProductList() {
             </tbody>
           </table>
 
-          <div style={{display:"flex", gap:8}}>
-            <button disabled={page===0} onClick={()=>setPage(p=>p-1)}>‹ Önceki</button>
-            <span>Sayfa {page+1} / {data.totalPages}</span>
-            <button disabled={page+1>=data.totalPages} onClick={()=>setPage(p=>p+1)}>Sonraki ›</button>
+          <div className="d-flex gap-2 align-items-center">
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              disabled={page === 0}
+              onClick={() => setPage(p => p - 1)}
+            >
+              ‹ Önceki
+            </button>
+            <span>Sayfa {page + 1} / {data.totalPages}</span>
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              disabled={page + 1 >= data.totalPages}
+              onClick={() => setPage(p => p + 1)}
+            >
+              Sonraki ›
+            </button>
           </div>
         </>
       )}

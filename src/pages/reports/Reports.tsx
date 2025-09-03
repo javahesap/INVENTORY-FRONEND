@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDownload } from "../../hooks/useDownload";
 
 export default function Reports() {

@@ -1,6 +1,7 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import api from "../../api/axios";
+import type { Page } from "../../types";
 
 type Product = {
   id: number;
@@ -11,11 +12,11 @@ type Product = {
   createdAt?: string;
 };
 
-async function fetchProducts(page: number, size: number, q: string, sort: string) {
-  const { data } = await api.get("/api/products", {
+async function fetchProducts(page: number, size: number, q: string, sort: string): Promise<Page<Product>> {
+  const { data } = await api.get<Page<Product>>("/api/products", {
     params: { page, size, sort, q }
   });
-  return data; // Spring Page
+  return data;
 }
 
 export default function ProductList() {
@@ -24,10 +25,10 @@ export default function ProductList() {
   const [q, setQ] = React.useState("");
   const [sort, setSort] = React.useState("id,desc");
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery<Page<Product>>({
     queryKey: ["products", page, size, q, sort],
     queryFn: () => fetchProducts(page, size, q, sort),
-    keepPreviousData: true
+    placeholderData: keepPreviousData,
   });
 
   return (

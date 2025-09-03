@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import type { ReactNode, FC } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import api from "../api/axios";
 
 type AuthCtx = {
@@ -10,9 +11,9 @@ type AuthCtx = {
   hasRole: (role: string) => boolean;
 };
 
-const Ctx = createContext<AuthCtx>(null as any);
+const Ctx = createContext<AuthCtx | null>(null);
 
-export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
+export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
   const [username, setUsername] = useState<string | null>(localStorage.getItem("username"));
   const [roles, setRoles] = useState<string[]>(
@@ -38,9 +39,16 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
   const hasRole = (r: string) => roles.includes(r) || roles.includes(`ROLE_${r}`);
 
-  const value = useMemo(() => ({ token, username, roles, login, logout, hasRole }), [token, username, roles]);
+  const value = useMemo(
+    () => ({ token, username, roles, login, logout, hasRole }),
+    [token, username, roles, login, logout, hasRole]
+  );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 };
-
-export const useAuth = () => useContext(Ctx);
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAuth = () => {
+  const ctx = useContext(Ctx);
+  if (!ctx) throw new Error("AuthProvider missing");
+  return ctx;
+};

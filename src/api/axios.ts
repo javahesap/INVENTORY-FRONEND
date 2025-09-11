@@ -1,22 +1,28 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE,
+  baseURL: "http://localhost:8080", // backend adresin
+  withCredentials: false,
 });
 
+// İsteklere token ekle
 api.interceptors.request.use((config) => {
-  const t = localStorage.getItem("token");
-  if (t) config.headers.Authorization = `Bearer ${t}`;
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers = config.headers ?? {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
+// 401/403 yakala → oturum düşür
 api.interceptors.response.use(
-  (r) => r,
+  (res) => res,
   (err) => {
-    if (err.response?.status === 401 || err.response?.status === 403) {
-      // İstersen otomatik logout veya login sayfasına yönlendirme
-      // localStorage.clear();
-      // window.location.href = "/login";
+    const status = err?.response?.status;
+    if (status === 401 || status === 403) {
+      // Küçük bir işaret bırak, Provider logout yapabilsin
+      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
     }
     return Promise.reject(err);
   }
